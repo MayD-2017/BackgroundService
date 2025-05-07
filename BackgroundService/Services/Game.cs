@@ -12,6 +12,7 @@ namespace BackgroundService.Services
     {
         public int Score { get; set; } = 0;
         // TODO: Ajouter une propriété pour le multiplier
+        public int multiplier { get; set; } = 1;
     }
 
     public class Game : Microsoft.Extensions.Hosting.BackgroundService
@@ -45,16 +46,27 @@ namespace BackgroundService.Services
         {
             UserData userData = _data[userId];
             // TODO: Ajouter la valeur du muliplier au lieu d'ajouter 1
-            userData.Score += 1;
+            userData.Score += userData.multiplier;
+
         }
 
         // TODO: Ajouter une méthode pour acheter un multiplier. Le coût est le prix de base * le multiplier actuel
         // Les prix sont donc de 10, 20, 40, 80, 160 (Si le prix de base est 10)
         // Réduire le score du coût du multiplier
         // Doubler le multiplier du joueur
+        public async Task Multiplier()
+        {
 
+        }
         public async Task EndRound(CancellationToken stoppingToken)
         {
+            using (IServiceScope scope = _serviceScopeFactory.CreateScope())
+            {
+                BackgroundServiceContext dbContext = scope.ServiceProvider.GetRequiredService<BackgroundServiceContext>();
+
+                // On peut maintenant utiliser le dbContext normalement
+                // On peut également faire un SaveChanges
+            }
             List<string> winners = new List<string>();
             int biggestValue = 0;
             // Reset des compteurs
@@ -96,8 +108,8 @@ namespace BackgroundService.Services
                 BackgroundServiceContext backgroundServiceContext =
                     scope.ServiceProvider.GetRequiredService<BackgroundServiceContext>();
 
-                // TODO: Mettre à jour et sauvegarder le nbWinds des joueurs
-
+                // TODO: Mettre à jour et sauvegarder le nbWins des joueurs
+                pla
                 List<IdentityUser> users = await backgroundServiceContext.Users.Where(u => winners.Contains(u.Id)).ToListAsync();
 
                 RoundResult roundResult = new RoundResult()
